@@ -1,0 +1,22 @@
+[package]
+name = "gh_ghpm_rs"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "gh-ghpm-rs"
+path = "src/main.rs"
+
+[target.aarch64-unknown-linux-gnu]
+linker = "aarch64-linux-gnu-gcc"
+
+[target.aarch64-linux-gnu]
+linker = "aarch64-linux-gnu-gcc"
+
+[dependencies]
+clap = { version = "4.5.23", features = ["derive"] }
+octocrab = "0.42.1"
+tokio = { version = "1.41.0", features = ["full"]}
+serde = { version = "1.0.214", features = ["derive"]}
+serde_json = "1.0.132"
+
