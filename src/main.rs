@@ -12,7 +12,7 @@ enum GhpmCommand {
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 #[command(name = "ghpm-rs")]
-#[command(version = "v0.1.2")]
+#[command(version = "v0.1.3")]
 #[command(about = "Manages your github privacy", long_about = None)]
 struct Cli {
     #[command(subcommand)]
@@ -101,7 +101,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         continue;
                     }
 
-                    if *repository_name == readme_repository {
+                    if repository_name == &readme_repository {
                         println!(
                             "dodging the README repository {} because it's a special repository",
                             readme_repository
