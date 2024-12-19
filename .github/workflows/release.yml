@@ -52,4 +52,4 @@ jobs:
           DIST_FILE_NAME: ${{ matrix.platform.name }}
         with:
           build_script_override: "script/build.sh"
-          attestations: true
+          generate_attestations: true
