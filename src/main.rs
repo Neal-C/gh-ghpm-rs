@@ -12,7 +12,7 @@ enum GhpmCommand {
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 #[command(name = "ghpm-rs")]
-#[command(version = "v0.1.0")]
+#[command(version = "v0.1.1")]
 #[command(about = "Manages your github privacy", long_about = None)]
 struct Cli {
     #[command(subcommand)]
@@ -77,8 +77,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     public_repositories_names
                 );
 
-                for repo in public_repositories.clone() {
-                    let Some(repository_name) = repo.full_name else {
+                for repo in public_repositories.iter() {
+                    let Some(repository_name) = repo.full_name.as_ref() else {
                         println!("skipped a repository without a full_name");
                         continue;
                     };
@@ -101,7 +101,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         continue;
                     }
 
-                    if repository_name == readme_repository {
+                    if *repository_name == readme_repository {
                         println!(
                             "dodging the README repository {} because it's a special repository",
                             readme_repository
