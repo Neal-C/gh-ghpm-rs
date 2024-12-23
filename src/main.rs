@@ -12,7 +12,7 @@ enum GhpmCommand {
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 #[command(name = "ghpm-rs")]
-#[command(version = "v0.1.3")]
+#[command(version = "v0.1.4")]
 #[command(about = "Manages your github privacy", long_about = None)]
 struct Cli {
     #[command(subcommand)]
@@ -38,7 +38,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .to_string();
 
     if token.is_empty() {
-        panic!("can't work unless authenticated to github with 'gh login' ")
+        /*
+        A program must panic only when something irrecoverable happens,
+        such as nil dereference. An exception to this is program initialization:
+        bad things at program startup that should abort the program may cause panic.
+
+        panic is ok when an invariant that must be upheld was broken.
+         */
+        panic!("can't work unless authenticated to github with 'gh auth login' ")
     }
 
     let octocrab = Octocrab::builder().personal_token(token).build()?;
