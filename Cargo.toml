@@ -1,6 +1,6 @@
 [package]
 name = "gh_ghpm_rs"
-version = "0.1.0"
+version = "0.1.5"
 edition = "2021"
 
 [[bin]]
@@ -14,9 +14,9 @@ linker = "aarch64-linux-gnu-gcc"
 linker = "aarch64-linux-gnu-gcc"
 
 [dependencies]
-clap = { version = "4.5.23", features = ["derive"] }
-octocrab = "0.42.1"
-tokio = { version = "1.41.0", features = ["full"]}
-serde = { version = "1.0.214", features = ["derive"]}
-serde_json = "1.0.132"
+clap = { version = "4.5.38", features = ["derive"] }
+octocrab = "0.44.1"
+tokio = { version = "1.45.0", features = ["full"]}
+serde = { version = "1.0.219", features = ["derive"]}
+serde_json = "1.0.140"
 

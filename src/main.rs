@@ -1,6 +1,9 @@
+use std::sync::Arc;
+
 use clap::{Parser, Subcommand};
 use octocrab::{models::Repository, Octocrab};
 use serde_json::json;
+use tokio::task::JoinSet;
 
 #[derive(Subcommand)]
 enum GhpmCommand {
@@ -12,7 +15,7 @@ enum GhpmCommand {
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 #[command(name = "ghpm-rs")]
-#[command(version = "v0.1.4")]
+#[command(version = "v0.1.5")]
 #[command(about = "Manages your github privacy", long_about = None)]
 struct Cli {
     #[command(subcommand)]
@@ -48,7 +51,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         panic!("can't work unless authenticated to github with 'gh auth login' ")
     }
 
-    let octocrab = Octocrab::builder().personal_token(token).build()?;
+    let octocrab = Arc::new(Octocrab::builder().personal_token(token).build()?);
 
     let user: octocrab::models::UserProfile = octocrab.get("/user", None::<&()>).await?;
 
@@ -84,8 +87,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     public_repositories_names
                 );
 
+                let mut switch_task_set = JoinSet::new();
+
                 for repo in public_repositories.iter() {
-                    let Some(repository_name) = repo.full_name.as_ref() else {
+                    let Some(repository_name) = repo.full_name.clone() else {
                         println!("skipped a repository without a full_name");
                         continue;
                     };
@@ -108,7 +113,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         continue;
                     }
 
-                    if repository_name == &readme_repository {
+                    if repo.fork == Some(true) {
+                        println!("skipped {} because it's a fork", &repository_name,);
+
+                        continue;
+                    }
+
+                    if repository_name == readme_repository {
                         println!(
                             "dodging the README repository {} because it's a special repository",
                             readme_repository
@@ -117,22 +128,32 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         continue;
                     }
 
-                    let current_endpoint =
-                        format!("https://api.github.com/repos/{}", &repository_name);
+                    let payload = payload.clone();
 
-                    let result = octocrab
-                        .patch::<Repository, _, _>(current_endpoint, Some(&payload))
-                        .await;
+                    let task_client = Arc::clone(&octocrab);
 
-                    match result {
-                        Ok(_) => {
-                            println!("{} was switched to private", &repository_name)
+                    switch_task_set.spawn(async move{
+
+                        let current_endpoint =
+                            format!("https://api.github.com/repos/{}", &repository_name);
+
+                        let result = task_client
+                            .patch::<Repository, _, _>(current_endpoint, Some(&payload))
+                            .await;
+
+                        match result {
+                            Ok(_) => {
+                                println!("{} was switched to private", &repository_name.clone())
+                            }
+                            Err(_) => {
+                                println!("failed to switch {} to private. Manually switch it to private (see README) and please complain to the developer", &repository_name)
+                            }
                         }
-                        Err(_) => {
-                            println!("failed to switch {} to private. Manually switch it to private (see README) and please complain to the developer", &repository_name)
-                        }
-                    }
+
+                    });
                 }
+
+                switch_task_set.join_all().await;
 
                 if public_repositories.len() != 100 {
                     break;
