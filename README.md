@@ -91,6 +91,29 @@ I am open to random pull requests that do at least 1 of the following :
 - add/improve documentation
 - improve CI/CD
 
+### Local setup
+
+0. if gh-ghpm-rs is already installed, uninstall it with 
+```bash
+gh extension remove ghpm-rs
+```
+1. Clone the repo
+2. Run `cargo build --release`
+```bash
+cargo build --release
+```
+3. ```cp target/release/gh-ghpm-rs .```
+```bash
+cp target/release/gh-ghpm-rs .
+```
+4. Run `gh extension install .`
+```bash
+gh extension install .
+```
+5. Run `gh ghpm-rs --help`
+```bash
+gh ghpm-rs --help
+```
 
 ## How to permanently delete or hide data from a repository ?
 

@@ -3,13 +3,12 @@ on:
   push:
     tags:
       - "v*.*.*"
-permissions:
-  contents: write
-  attestations: write
-  id-token: write
 
 jobs:
   release:
+    permissions:
+      contents: write
+      attestations: write
     runs-on: ${{ matrix.platform.os }}
     strategy:
       matrix:
