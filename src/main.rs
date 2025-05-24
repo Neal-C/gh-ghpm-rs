@@ -7,7 +7,7 @@ use tokio::task::JoinSet;
 
 #[derive(Subcommand)]
 enum GhpmCommand {
-    /// Turns all your repositories private, except starred ones
+    /// Turns all your non-starred and non-fork repositories private
     #[clap(name = "thanos_snap")]
     ThanosSnap,
 }
@@ -15,7 +15,7 @@ enum GhpmCommand {
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 #[command(name = "ghpm-rs")]
-#[command(version = "v0.1.5")]
+#[command(version = "v0.1.6")]
 #[command(about = "Manages your github privacy", long_about = None)]
 struct Cli {
     #[command(subcommand)]

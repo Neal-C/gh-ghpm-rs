@@ -63,7 +63,7 @@ gh ghpm-rs --help
 ```
 
 ```bash
-# turns all your repositories private (except starred repos)
+# turns all your repositories private (except starred repos & forks)
 gh ghpm-rs thanos_snap
 ```
 
