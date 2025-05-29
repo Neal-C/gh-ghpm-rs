@@ -9,6 +9,8 @@ jobs:
     permissions:
       contents: write
       attestations: write
+      # needed
+      id-token: write
     runs-on: ${{ matrix.platform.os }}
     strategy:
       matrix:
